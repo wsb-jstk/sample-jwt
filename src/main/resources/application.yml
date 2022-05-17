@@ -33,3 +33,7 @@ spring:
     console:
       enabled: true
       path: '/h2-console'
+  security:
+#    user: # override settings for default user (if not defined) from UserDetailsServiceAutoConfiguration
+#      name: 'user'
+#      password: 'password'
