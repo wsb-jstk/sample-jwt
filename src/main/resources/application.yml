@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  servlet:
+    context-path: '/jwt'
+logging:
+  level:
+    root: 'INFO'
+    org.springframework.boot.autoconfigure: 'INFO' # Disable "CONDITIONS EVALUATION REPORT" (which is DEBUG)
+    org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration: 'DEBUG' # shows auto-generated security password - the default user credentials (if not defined)
+#    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: 'TRACE' # Mappings from @Controller
+#    org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping: 'TRACE' # 'Register "{GET /actuator'...
+management:
+  endpoints:
+    web.exposure.include: '*'
