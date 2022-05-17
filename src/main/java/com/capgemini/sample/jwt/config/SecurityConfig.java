@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                      .antMatchers(HttpMethod.GET, "/api/user/**").hasAnyRole("USER")//
                                      .antMatchers(HttpMethod.POST, "/api/user/**", "/api/role/**").hasAnyRole("ADMIN")//
                                      .anyRequest().authenticated());
-        http.formLogin(); // adds UsernamePasswordAuthenticationFilter into the chain for POST /login
+        // http.formLogin(); // adds UsernamePasswordAuthenticationFilter into the chain for POST /login
         http.httpBasic(); // adds BasicAuthenticationFilter into the security chain
         http.sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // IF_REQUIRED is a default one; needed if You want to use WWW and be able to login and access secured resources; use STATELESS if You will use only REST requests with Tokens
         http.csrf().disable(); // disable CSRF for H2 Console web UI (to avoid 403 Forbidden)
