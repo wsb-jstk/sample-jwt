@@ -4,8 +4,8 @@ Demo for JSON Web Token (JWT) with Spring Boot
 
 # Uproszczony schemat
 
-* Authentification - who am I? np. Jan Kowalski
-* Autorization - what can I do? np. uprawnienia do zapisu
+* Authentication - who am I? np. Jan Kowalski
+* Authorization - what can I do? np. uprawnienia do zapisu
 
 ```
 System A  -> request -> System B

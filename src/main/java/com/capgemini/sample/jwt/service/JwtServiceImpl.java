@@ -22,6 +22,11 @@ public class JwtServiceImpl implements JwtService {
 
     private static final String ISSUER = "issuer";
     private static final String ROLES = "roles";
+    private static final int ACCESS_TOKEN_MAX_AGE_IN_MINUTES = 10;
+    /**
+     * How lont the refreshToken is valid. This number should be bigger than {@link #ACCESS_TOKEN_MAX_AGE_IN_MINUTES}
+     */
+    private static final int REFRESH_TOKEN_MAX_AGE_IN_MINUTES = 30;
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
     private final UserDetailsService userDetailsService;
@@ -34,21 +39,21 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String createAccessToken(org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public String createAccessToken(UserDetails userDetails) {
         return JWT.create()
                   .withSubject(userDetails.getUsername())
-                  .withExpiresAt(getDateAfterMinutes(10))
+                  .withExpiresAt(getDateAfterMinutes(ACCESS_TOKEN_MAX_AGE_IN_MINUTES))
                   .withIssuer(ISSUER)
                   .withClaim(ROLES, getRoles(userDetails))
                   .sign(this.algorithm);
     }
 
     @Override
-    public String createRefreshToken(org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public String createRefreshToken(UserDetails userDetails) {
         return JWT.create()
                   .withSubject(userDetails.getUsername())
-                  .withExpiresAt(getDateAfterMinutes(30))
-                  // .withNotBefore(getDateAfterMinutes(9))
+                  .withExpiresAt(getDateAfterMinutes(REFRESH_TOKEN_MAX_AGE_IN_MINUTES))
+                  // .withNotBefore(getDateAfterMinutes(9)) // for ex. to prevent user from using it to early (before accessToken will expire)
                   .withIssuer(ISSUER)
                   .sign(this.algorithm);
     }

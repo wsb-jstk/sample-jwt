@@ -1,6 +1,7 @@
 package com.capgemini.sample.jwt.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.capgemini.sample.jwt.controller.AuthController;
 import com.capgemini.sample.jwt.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -25,13 +26,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MyAuthorizationFilter extends OncePerRequestFilter {
 
-    private static final String BEARER = "Bearer ";
+    public static final String BEARER = "Bearer ";
     private static final ObjectMapper MAPPER = JsonMapper.builder()
                                                          .build();
+    /**
+     * {@link AuthController Endpoint}, which refresh accessToken and refreshToken
+     */
+    private static final String AUTHENTICATE_ENDPOINT = "/auth";
     private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI()
+                   .contains(AUTHENTICATE_ENDPOINT)) {
+            // obtaining new accessToken and refreshToken based on refreshToken - do not verify provided refreshToken as it would be accessToken
+            filterChain.doFilter(request, response);
+            return;
+        }
         final Optional<String> optionalEncodedToken = Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
                                                               .filter(h -> h.startsWith(BEARER))
                                                               .map(h -> h.substring(BEARER.length()));
@@ -41,7 +52,6 @@ public class MyAuthorizationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authToken = jwtService.verifyToken(token);
                 SecurityContextHolder.getContext()
                                      .setAuthentication(authToken);
-                filterChain.doFilter(request, response);
             } catch (JWTVerificationException exception) {
                 handleException(response, exception);
                 return;

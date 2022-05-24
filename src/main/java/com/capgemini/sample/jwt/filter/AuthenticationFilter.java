@@ -41,8 +41,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
         final String accessToken = this.jwtService.createAccessToken(user);
         final String refreshToken = this.jwtService.createRefreshToken(user);
-        final Map<String, String> mapToken = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        final Map<String, String> mapToken = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         objectMapper.writeValue(response.getOutputStream(), mapToken);
     }
 
