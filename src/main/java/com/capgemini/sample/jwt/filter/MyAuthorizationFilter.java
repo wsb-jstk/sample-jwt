@@ -44,8 +44,10 @@ public class MyAuthorizationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             } catch (JWTVerificationException exception) {
                 handleException(response, exception);
+                return;
             }
         }
+        filterChain.doFilter(request, response);
     }
 
     private void handleException(HttpServletResponse response, JWTVerificationException exception) throws IOException {

@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests(r -> r.mvcMatchers("/hello/**").permitAll()
                                      .antMatchers("/h2-console/**", "/actuator/**", "/error").permitAll()
+                                     .antMatchers( "/auth/**").permitAll() // we do not need to add /login, since the auth is done on filter-level and not controller-level
                                      .antMatchers(HttpMethod.GET, "/api/users").permitAll()//
                                      .antMatchers(HttpMethod.GET, "/api/user/**").hasAnyRole("USER")//
                                      .antMatchers(HttpMethod.POST, "/api/user/**", "/api/role/**").hasAnyRole("ADMIN")//

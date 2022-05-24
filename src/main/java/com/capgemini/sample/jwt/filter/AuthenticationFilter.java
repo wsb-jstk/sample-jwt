@@ -1,5 +1,6 @@
 package com.capgemini.sample.jwt.filter;
 
+import com.capgemini.sample.jwt.controller.AuthController;
 import com.capgemini.sample.jwt.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -15,6 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Could be theoretically done as one of the endpoint for {@link AuthController}
+ */
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper = JsonMapper.builder()
@@ -36,7 +40,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             IOException {
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
         final String accessToken = this.jwtService.createAccessToken(user);
-        final Map<String, String> mapToken = Map.of("accessToken", accessToken);
+        final String refreshToken = this.jwtService.createRefreshToken(user);
+        final Map<String, String> mapToken = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(), mapToken);
     }
