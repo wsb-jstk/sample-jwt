@@ -11,7 +11,7 @@ Demo for JSON Web Token (JWT) with Spring Boot
 System A  -> request -> System B
 
 System A -> jestem Jan Kowalski (user/password)
-    <- System B zwroci accessToken
+    <- System B zwroci accessToken (expiration 10minutes)
 System A -> chce wywolac GET /users, accessToken
     System B zwaliduje token
     System B sprawdzi czy user (przedstawiony przez Token) ma dostep do zasobu GET /users

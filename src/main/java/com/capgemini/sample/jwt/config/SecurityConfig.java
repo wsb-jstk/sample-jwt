@@ -1,5 +1,8 @@
 package com.capgemini.sample.jwt.config;
 
+import com.capgemini.sample.jwt.filter.AuthenticationFilter;
+import com.capgemini.sample.jwt.filter.MyAuthorizationFilter;
+import com.capgemini.sample.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
@@ -19,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
+    private final MyAuthorizationFilter authorizationFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,12 +39,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // IF_REQUIRED is a default one; needed if You want to use WWW and be able to login and access secured resources; use STATELESS if You will use only REST requests with Tokens
         http.csrf().disable(); // disable CSRF for H2 Console web UI (to avoid 403 Forbidden)
         http.headers().frameOptions().sameOrigin(); // enables <frame> in H2 Console web UI
+        http.addFilter(new AuthenticationFilter(authenticationManagerBean(), this.jwtService));
+        http.addFilterBefore(this.authorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailsService)
             .passwordEncoder(passwordEncoder());
+
     }
 
     @Bean
